@@ -1,0 +1,647 @@
+/* =========================================================================
+   Veio Marcenaria – landing page
+   HTML e CSS puros, layout com Flexbox e responsividade.
+
+   Organização: cada bloco indica se o elemento é um CONTAINER Flexbox e a
+   direção dos seus itens, seguindo a técnica de reprodução de layout:
+   um container só é válido quando todos os seus itens estão na mesma
+   direção; itens em outra direção são agrupados em subcontainers
+   (Oliveira, 2025, p. 158-160).
+
+   Referência: OLIVEIRA, B. de. Fundamentos de programação web.
+   São Paulo: Editora Senac São Paulo, 2025.
+   ========================================================================= */
+
+/* ---------- Variáveis (custom properties) – Oliveira (2025, p. 97) ---------- */
+:root {
+  --cor-fundo: #faf5ee;
+  --cor-areia: #efe1cc;
+  --cor-madeira: #7a3f1d;
+  --cor-madeira-escura: #2b1a10;
+  --cor-destaque: #c0612b;
+  --cor-destaque-escura: #9e4a1d;
+  --cor-texto: #3a2a20;
+  --cor-texto-suave: #6e5a4b;
+  --cor-verde: #2f4a3a;
+  --cor-branca: #fffdf9;
+
+  --fonte-titulo: Georgia, "Times New Roman", serif;
+  --fonte-texto: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --raio: 14px;
+  --sombra: 0 10px 30px rgba(43, 26, 16, 0.08);
+}
+
+/* ---------- Base ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* largura já inclui padding e borda (box model) */
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--fonte-texto);
+  font-size: clamp(16px, 1.1vw, 18px); /* fonte responsiva (Oliveira, 2025, p. 177-178) */
+  line-height: 1.6;
+  color: var(--cor-texto);
+  background-color: var(--cor-fundo);
+}
+
+h1, h2, h3 {
+  font-family: var(--fonte-titulo);
+  line-height: 1.2;
+  color: var(--cor-madeira-escura);
+}
+
+h1 { font-size: clamp(34px, 4.6vw, 58px); }
+h2 { font-size: clamp(28px, 3.2vw, 40px); }
+h3 { font-size: clamp(19px, 1.5vw, 22px); }
+
+a { color: inherit; }
+svg { display: block; }
+
+/* Container de largura máxima: cresce até 1200px e diminui com a tela
+   (max-width + width 100% – Oliveira, 2025, p. 177) */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+section { padding: clamp(64px, 8vw, 110px) 0; }
+
+/* ---------- Componentes reutilizáveis ---------- */
+.botao {
+  display: inline-block;
+  padding: 14px 28px;
+  border: 2px solid var(--cor-destaque);
+  border-radius: 50px;
+  background-color: var(--cor-destaque);
+  color: var(--cor-branca);
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.botao:hover { background-color: var(--cor-destaque-escura); transform: translateY(-2px); }
+
+.botao-contorno { background-color: transparent; color: var(--cor-destaque-escura); }
+.botao-contorno:hover { background-color: var(--cor-areia); }
+
+.botao-pequeno { padding: 9px 20px; font-size: 15px; }
+.botao-largo { width: 100%; font-size: 17px; }
+
+.rotulo {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cor-destaque);
+}
+.rotulo-claro { color: #f0b98b; }
+
+/* Cabeçalho de seção: CONTAINER em coluna, centralizado */
+.cabecalho-secao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 680px;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+.cabecalho-esquerda { align-items: flex-start; text-align: left; margin: 0; }
+
+/* =========================================================================
+   CABEÇALHO
+   ========================================================================= */
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: rgba(250, 245, 238, 0.94);
+  border-bottom: 1px solid #eadcc8;
+}
+
+/* CONTAINER em linha: logo | menu (itens nas pontas) */
+.topo-conteudo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 72px;
+}
+
+/* SUBCONTAINER em linha: ícone + nome */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo-icone { width: 40px; height: 40px; }
+.logo-texto {
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--cor-madeira-escura);
+}
+.logo-texto small {
+  font-family: var(--fonte-texto);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+/* SUBCONTAINER em linha: links do menu */
+.menu-navegacao {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.menu-navegacao a:not(.botao) {
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.menu-navegacao a:not(.botao):hover { color: var(--cor-destaque); }
+
+/* Menu hambúrguer: escondido no desktop, aparece na media query */
+.menu-toggle { display: none; }
+.menu-hamburguer { display: none; }
+
+/* =========================================================================
+   FAIXA 1 – HERO
+   ========================================================================= */
+.hero { padding-top: clamp(48px, 6vw, 80px); }
+
+/* CONTAINER em linha: texto | ilustração (flex-wrap para quebrar em telas menores) */
+.hero-conteudo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 56px;
+}
+
+/* SUBCONTAINER em coluna: selo, título, subtítulo, ações, garantias */
+.hero-texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 22px;
+  flex: 1 1 480px; /* cresce, encolhe e tem base de 480px */
+}
+
+.selo {
+  padding: 6px 14px;
+  border-radius: 50px;
+  background-color: var(--cor-areia);
+  color: var(--cor-madeira);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.hero-subtitulo { max-width: 560px; font-size: clamp(17px, 1.3vw, 20px); color: var(--cor-texto-suave); }
+
+/* SUBCONTAINER em linha: botões */
+.hero-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* SUBCONTAINER em linha: garantias */
+.hero-garantias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  list-style: none;
+  font-size: 15px;
+  font-weight: 500;
+}
+.hero-garantias li::before { content: "✓ "; color: var(--cor-verde); font-weight: 700; }
+
+/* SUBCONTAINER apenas para a imagem, para torná-la fluida (Oliveira, 2025, p. 161) */
+.hero-imagem { flex: 1 1 380px; max-width: 520px; }
+.hero-imagem svg { width: 100%; height: auto; }
+
+/* =========================================================================
+   FAIXA 2 – SOBRE
+   ========================================================================= */
+.sobre { background-color: var(--cor-branca); }
+
+/* CONTAINER em linha: foto | texto */
+.sobre-conteudo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 56px;
+}
+
+/* SUBCONTAINER em coluna: foto + legenda */
+.sobre-foto {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 320px;
+  max-width: 460px;
+}
+/* Espaço reservado à foto: textura de madeira feita só com CSS.
+   Para usar uma foto real, troque por <img src="img/marcos.jpg" alt="..."> */
+.foto-madeira {
+  aspect-ratio: 4 / 5;
+  border-radius: var(--raio);
+  background:
+    repeating-radial-gradient(ellipse at 30% 120%, transparent 0 14px, rgba(90, 45, 20, 0.18) 14px 16px),
+    linear-gradient(160deg, #c98a55, #8a4a22);
+  box-shadow: var(--sombra);
+}
+.sobre-foto figcaption { font-size: 14px; color: var(--cor-texto-suave); }
+
+/* SUBCONTAINER em coluna: textos e números */
+.sobre-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1 1 420px;
+}
+
+/* SUBCONTAINER em linha: números de destaque */
+.numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+/* Cada número: SUBCONTAINER em coluna */
+.numero {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 140px;
+  padding: 18px 20px;
+  border-radius: var(--raio);
+  background-color: var(--cor-areia);
+}
+.numero strong { font-family: var(--fonte-titulo); font-size: 30px; color: var(--cor-madeira); }
+.numero span { font-size: 14px; color: var(--cor-texto-suave); }
+
+/* =========================================================================
+   FAIXA 3 – SERVIÇOS
+   ========================================================================= */
+/* CONTAINER em linha com quebra: os cards se reorganizam conforme a largura
+   (flex-wrap – Oliveira, 2025, p. 177) */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+/* Cada card: SUBCONTAINER em coluna */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 240px; /* 4 por linha no desktop, 2 no tablet, 1 no celular */
+  padding: 30px 26px;
+  border: 1px solid #eadcc8;
+  border-radius: var(--raio);
+  background-color: var(--cor-branca);
+  box-shadow: var(--sombra);
+  transition: transform 0.2s;
+}
+.card:hover { transform: translateY(-4px); }
+.card p { color: var(--cor-texto-suave); }
+
+.icone {
+  width: 52px;
+  height: 52px;
+  padding: 10px;
+  border-radius: 12px;
+  background-color: var(--cor-areia);
+  fill: none;
+  stroke: var(--cor-madeira);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* =========================================================================
+   FAIXA 4 – VANTAGENS
+   ========================================================================= */
+.vantagens { background-color: var(--cor-madeira-escura); }
+.vantagens h2, .vantagens h3 { color: var(--cor-branca); }
+
+/* CONTAINER em linha com quebra */
+.beneficios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Cada benefício: SUBCONTAINER em coluna */
+.beneficio {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 300px;
+  padding: 28px;
+  border-left: 4px solid var(--cor-destaque);
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.beneficio p { color: #d9c9b8; }
+
+/* =========================================================================
+   FAIXA 5 – COMO FUNCIONA
+   ========================================================================= */
+/* CONTAINER em linha com quebra: 4 passos lado a lado no desktop */
+.passos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  list-style: none;
+}
+
+/* Cada passo: SUBCONTAINER em coluna */
+.passo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1 1 220px;
+}
+.passo-numero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--cor-destaque);
+  color: var(--cor-branca);
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 700;
+}
+.passo p { color: var(--cor-texto-suave); }
+
+/* =========================================================================
+   FAIXA 6 – DÚVIDAS
+   ========================================================================= */
+.duvidas { background-color: var(--cor-branca); }
+
+/* CONTAINER em linha: título | perguntas */
+.duvidas-conteudo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 48px;
+}
+.duvidas-conteudo .cabecalho-secao { flex: 1 1 280px; }
+
+/* SUBCONTAINER em coluna: lista de perguntas */
+.perguntas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 2 1 480px;
+}
+
+details {
+  padding: 18px 22px;
+  border: 1px solid #eadcc8;
+  border-radius: var(--raio);
+  background-color: var(--cor-fundo);
+}
+summary {
+  font-weight: 600;
+  color: var(--cor-madeira-escura);
+  cursor: pointer;
+}
+details p { margin-top: 10px; color: var(--cor-texto-suave); }
+
+/* =========================================================================
+   FAIXA 7 – CONTATO
+   ========================================================================= */
+.contato {
+  background:
+    linear-gradient(rgba(43, 26, 16, 0.92), rgba(43, 26, 16, 0.92)),
+    repeating-linear-gradient(100deg, #7a3f1d 0 6px, #8a4a22 6px 14px);
+}
+
+/* CONTAINER em linha: informações | formulário */
+.contato-conteudo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 56px;
+}
+
+/* SUBCONTAINER em coluna: chamada e dados de contato */
+.contato-info {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1 1 360px;
+  color: #e9dccd;
+}
+.contato-info h2 { color: var(--cor-branca); }
+
+.contato-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+.contato-lista strong { color: var(--cor-branca); }
+.contato-lista a { color: #f0b98b; }
+
+/* SUBCONTAINER em coluna: formulário */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1 1 420px;
+  padding: clamp(24px, 3vw, 40px);
+  border-radius: 20px;
+  background-color: var(--cor-branca);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* Linha com dois campos lado a lado: SUBCONTAINER em linha com quebra */
+.linha-campos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.linha-campos .campo { flex: 1 1 200px; }
+
+/* Cada campo: SUBCONTAINER em coluna (rótulo acima da caixa) */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.campo label { font-size: 15px; font-weight: 600; }
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d8c6b0;
+  border-radius: 10px;
+  background-color: #fff;
+  color: var(--cor-texto);
+  font: inherit;
+}
+input:focus, select:focus, textarea:focus {
+  outline: 3px solid rgba(192, 97, 43, 0.25);
+  border-color: var(--cor-destaque);
+}
+textarea { resize: vertical; }
+
+/* Consentimento: SUBCONTAINER em linha (caixa + texto) */
+.consentimento {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+}
+.consentimento input { width: auto; margin-top: 5px; }
+
+/* =========================================================================
+   RODAPÉ
+   ========================================================================= */
+.rodape {
+  padding: 48px 0 24px;
+  background-color: #1d120b;
+  color: #cbb8a5;
+}
+.rodape .logo-texto { color: var(--cor-branca); }
+.rodape .logo-texto small { color: #cbb8a5; }
+
+/* CONTAINER em linha: marca | links */
+.rodape-conteudo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+.rodape-marca { display: flex; flex-direction: column; gap: 6px; }
+
+/* SUBCONTAINER em linha: links */
+.rodape-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.rodape-links a { text-decoration: none; }
+.rodape-links a:hover { color: var(--cor-branca); }
+
+.rodape-nota {
+  margin-top: 32px;
+  padding: 20px 24px 0;
+  border-top: 1px solid #3a281b;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Botão flutuante: posicionamento fixo, fora do fluxo do Flexbox */
+.whatsapp-flutuante {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 50px;
+  background-color: var(--cor-verde);
+  color: var(--cor-branca);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.whatsapp-flutuante svg { width: 22px; height: 22px; fill: var(--cor-branca); }
+
+/* =========================================================================
+   RESPONSIVIDADE – media queries (Oliveira, 2025, p. 178)
+   ========================================================================= */
+
+/* Tablets e telas até 1024px */
+@media (max-width: 1024px) {
+  .topo { position: static; } /* no celular o menu aberto não fica preso no topo */
+
+  .menu-hamburguer {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .menu-hamburguer span {
+    width: 26px;
+    height: 3px;
+    border-radius: 2px;
+    background-color: var(--cor-madeira-escura);
+  }
+
+  .topo-conteudo { flex-wrap: wrap; }
+
+  /* menu vira uma coluna, oculta até o ícone ser tocado */
+  .menu-navegacao {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    width: 100%;
+    padding: 8px 0 20px;
+  }
+  .menu-navegacao a:not(.botao) { padding: 10px 0; border-bottom: 1px solid #eadcc8; }
+  .menu-navegacao .botao { margin-top: 12px; }
+
+  .menu-toggle:checked ~ .menu-navegacao { display: flex; }
+
+  /* Em coluna, flex-basis passa a valer para a altura; por isso os itens voltam ao tamanho natural */
+  .hero-conteudo { flex-direction: column; align-items: stretch; gap: 40px; }
+  .hero-texto { flex: none; }
+  .hero-imagem { flex: none; align-self: center; max-width: 440px; width: 100%; }
+
+  /* foto ocupa a largura toda em vez de ficar sozinha à esquerda */
+  .sobre-foto { flex-basis: 100%; max-width: none; }
+  .foto-madeira { aspect-ratio: 16 / 9; }
+
+  /* cards e passos em grade 2 x 2, evitando um item sozinho na última linha */
+  .card, .passo { flex-basis: calc(50% - 12px); }
+}
+
+/* Celulares até 600px */
+@media (max-width: 600px) {
+  .container { padding: 0 18px; }
+
+  .hero-texto { gap: 18px; }
+  .hero-acoes { flex-direction: column; align-self: stretch; }
+  .hero-imagem { max-width: 320px; }
+
+  .cabecalho-secao { margin-bottom: 32px; }
+
+  .sobre-conteudo, .contato-conteudo { gap: 36px; }
+  .foto-madeira { aspect-ratio: 16 / 10; }
+  .card, .passo { flex-basis: 100%; }
+
+  .numero { flex-basis: 100px; padding: 14px; }
+  .numero strong { font-size: 24px; }
+
+  .rodape-conteudo { flex-direction: column; align-items: flex-start; }
+
+  /* no celular o botão flutuante mostra só o ícone */
+  .whatsapp-flutuante span { display: none; }
+  .whatsapp-flutuante { padding: 14px; }
+}
